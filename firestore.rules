@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && request.auth.token.email == 'chandegaraharsh464@gmail.com';
+    }
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // Public portfolio content (admin writes)
+    match /site/{doc}        { allow read: if true; allow write: if isAdmin(); }
+    match /experiences/{id}  { allow read: if true; allow write: if isAdmin(); }
+    match /projects/{id}     { allow read: if true; allow write: if isAdmin(); }
+
+    // Outfit catalog: only logged-in users can see it. Users may only change likedBy.
+    match /outfits/{id} {
+      allow read: if signedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (signedIn() && onlyChanges(['likedBy']));
+    }
+
+    // User profiles
+    match /users/{uid} {
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow read, update: if signedIn() && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Orders: users create "Pending" orders; only admin changes status.
+    match /orders/{id} {
+      allow create: if signedIn()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == 'Pending';
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow update: if isAdmin()
+                    || (signedIn() && resource.data.userId == request.auth.uid && onlyChanges(['userNotified']));
+    }
+
+    // Chat: one thread per user (doc id = user uid)
+    match /chats/{uid} {
+      allow read, write: if signedIn() && (request.auth.uid == uid || isAdmin());
+      match /messages/{mid} {
+        allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+        allow create: if signedIn() &&
+          ((request.auth.uid == uid && request.resource.data.from == 'user') || isAdmin());
+      }
+    }
+  }
+}
