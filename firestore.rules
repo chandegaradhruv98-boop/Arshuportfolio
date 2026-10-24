@@ -14,6 +14,40 @@ service cloud.firestore {
     match /site/{doc}        { allow read: if true; allow write: if isAdmin(); }
     match /experiences/{id}  { allow read: if true; allow write: if isAdmin(); }
     match /projects/{id}     { allow read: if true; allow write: if isAdmin(); }
+    match /media/{id}        { allow read: if true; allow write: if isAdmin(); }
+
+    // Collections: visitors only see "Published" ones
+    match /collections/{id} {
+      allow read: if isAdmin() || resource.data.status == 'Published';
+      allow write: if isAdmin();
+    }
+
+    // Contact form messages: anyone can send, only admin can read
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'subject', 'message', 'status', 'createdAt'])
+        && request.resource.data.status == 'New'
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200
+        && request.resource.data.subject is string && request.resource.data.subject.size() <= 200
+        && request.resource.data.message is string && request.resource.data.message.size() > 0 && request.resource.data.message.size() <= 2000;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Visitor counter: anyone can add +1 to a counter, only admin can read
+    function statShape() {
+      return request.resource.data.keys().hasOnly(['views', 'newVisitors', 'returningVisits', 'date']);
+    }
+    match /stats/{id} {
+      allow read: if isAdmin();
+      allow create: if statShape()
+        && request.resource.data.views == 1
+        && request.resource.data.newVisitors in [0, 1]
+        && request.resource.data.returningVisits in [0, 1];
+      allow update: if statShape()
+        && request.resource.data.views - resource.data.views == 1
+        && request.resource.data.newVisitors - resource.data.newVisitors in [0, 1]
+        && request.resource.data.returningVisits - resource.data.returningVisits in [0, 1];
+    }
 
     // Outfit catalog: only logged-in users can see it. Users may only change likedBy.
     match /outfits/{id} {

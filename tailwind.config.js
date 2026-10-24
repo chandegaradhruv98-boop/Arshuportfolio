@@ -3,13 +3,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        accent: 'var(--accent)',   // admin can change this from the dashboard
-        ink: '#1E2250',
+        accent: 'var(--accent)', // changeable from Admin > Website (public site) - admin panel has its own
+        ink: '#2A211C',
         gold: '#B8923A',
-        paper: '#F6F5FA',
+        paper: '#F2EEE9',
+        sand: '#E5DDD3',
+        espresso: '#2B2019',
+        plum: '#241F29',
       },
       fontFamily: {
-        display: ['var(--font)', 'serif'], // admin can change this from the dashboard
+        display: ['var(--font)', 'serif'],
         body: ['Jost', 'sans-serif'],
       },
     },
