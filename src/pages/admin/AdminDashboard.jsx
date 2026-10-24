@@ -20,9 +20,9 @@ const tabs = [
 ];
 
 function useDesktop() {
-  const [ok, setOk] = useState(window.innerWidth >= 1024);
+  const [ok, setOk] = useState(window.innerWidth >= 900);
   useEffect(() => {
-    const on = () => setOk(window.innerWidth >= 1024);
+    const on = () => setOk(window.innerWidth >= 900);
     window.addEventListener('resize', on);
     return () => window.removeEventListener('resize', on);
   }, []);
