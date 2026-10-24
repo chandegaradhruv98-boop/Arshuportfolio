@@ -2,16 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --accent: #8A2A5B; --font: 'Cormorant Garamond'; }
+:root { --accent: #8A5A44; --font: 'Cormorant Garamond'; }
 
 body { @apply font-body bg-paper text-ink antialiased; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 @layer components {
-  .field { @apply w-full border border-ink/20 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-ink/30; }
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition disabled:opacity-50; }
+  .field { @apply w-full border border-ink/20 rounded-md px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ink/30; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2 text-sm font-medium transition disabled:opacity-50; }
   .btn-primary { @apply btn bg-accent text-white hover:opacity-90; }
   .btn-ghost { @apply btn border border-ink/25 hover:bg-ink/5; }
   .icon-btn { @apply p-2 rounded-full hover:bg-ink/10 transition; }
+  .eyebrow { @apply text-[11px] uppercase tracking-[0.3em]; }
+  .link-arrow { @apply inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] border-b border-current pb-1 hover:opacity-70 transition; }
 }
