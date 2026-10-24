@@ -5,13 +5,27 @@ import { db } from '../firebase';
 const defaults = {
   siteName: 'Arshu Studio',
   logoUrl: '',
-  heroTitle: 'Indo-Western fashion, cut for today',
-  heroSubtitle: 'Handcrafted silhouettes that carry heritage into modern wardrobes.',
-  aboutText: 'I am a fashion designer blending traditional Indian craft with contemporary tailoring.',
+  tagline: 'Fashion Designer',
+  heroEyebrow: "Hello, I'm a",
+  heroTitle: 'Fashion Designer & Creative Artist',
+  heroSubtitle: 'Blending tradition with modernity through contemporary silhouettes and timeless craft.',
+  heroButton: 'View my work',
+  heroImage: '',
   heroImages: [],
-  accentColor: '#8A2A5B',
+  collectionsEyebrow: 'My collections',
+  collectionsTitle: 'Indo Western Fusion',
+  collectionsText: 'Rooted in culture, designed for today.\nMy Indo-western collection brings together the elegance of Indian heritage and the freedom of modern fashion.',
+  processEyebrow: 'My design process',
+  processTitle: 'From Inspiration to Creation',
+  processText: 'Every collection starts with a feeling — a story, a culture, a colour, or a moment.',
+  processTags: 'Sketches, Mood boards, Fabrics, Final looks',
+  processImage: '',
+  processImages: [],
+  aboutTitle: 'Designing Dreams',
+  aboutText: 'I am a fashion designer with a deep love for Indian heritage, modern aesthetics and storytelling through clothing. My work is an experiment between tradition and innovation, where every garment tells a unique story.',
+  accentColor: '#8A5A44',
   fontFamily: 'Cormorant Garamond',
-  contact: { instagram: '', linkedin: '', email: '' },
+  contact: { instagram: '', pinterest: '', linkedin: '', email: '' },
 };
 
 const SiteCtx = createContext({ content: defaults, ready: false });
@@ -30,7 +44,6 @@ export function SiteProvider({ children }) {
     []
   );
 
-  // Apply admin-chosen accent colour + font site-wide
   useEffect(() => {
     document.documentElement.style.setProperty('--accent', content.accentColor);
     document.documentElement.style.setProperty('--font', `'${content.fontFamily}'`);
