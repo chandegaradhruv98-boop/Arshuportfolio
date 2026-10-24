@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { addDoc, collection, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Trash2 } from 'lucide-react';

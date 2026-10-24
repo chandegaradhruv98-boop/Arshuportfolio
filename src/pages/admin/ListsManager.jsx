@@ -4,8 +4,10 @@ import { db } from '../../firebase';
 import { useToast } from '../../components/Toast';
 import useCol from '../../hooks/useCol';
 import { uploadImage } from '../../lib/upload';
+import { img } from '../../lib/img';
+import { Card, PageHeader } from '../../components/admin/ui';
 
-// Fields save automatically when you leave them (blur).
+// Fields save automatically when you tap outside them (blur).
 export default function ListsManager() {
   const toast = useToast();
   const experiences = useCol('experiences');
@@ -15,7 +17,6 @@ export default function ListsManager() {
 
   const addExp = () => addDoc(collection(db, 'experiences'), { company: '', role: '', years: 0, months: 0, current: false, createdAt: serverTimestamp() });
   const addProj = () => addDoc(collection(db, 'projects'), { title: '', description: '', imageUrl: '', createdAt: serverTimestamp() });
-
   const setImage = async (id, file) => {
     if (!file) return;
     try { await upd('projects', id, { imageUrl: await uploadImage(file, 'projects') }); }
@@ -23,13 +24,12 @@ export default function ListsManager() {
   };
 
   return (
-    <div className="space-y-12 max-w-4xl">
+    <div className="space-y-10">
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-4xl">Work experience</h2>
-          <button className="btn-primary" onClick={addExp} aria-label="Add experience"><Plus size={16} /> Add</button>
-        </div>
+        <PageHeader title="Work experience" subtitle="Columns: Company, Role, Years, Months, Currently working"
+          action={<button className="btn-primary" onClick={addExp} aria-label="Add experience"><Plus size={16} /> Add</button>} />
         <div className="space-y-3">
+          {experiences.length === 0 && <p className="text-sm text-ink/50">Click “Add” to add your first work experience.</p>}
           {experiences.map((e) => (
             <div key={e.id} className="grid grid-cols-12 gap-3 items-center">
               <input className="field col-span-3" placeholder="Company" defaultValue={e.company} onBlur={(x) => upd('experiences', e.id, { company: x.target.value })} />
@@ -42,20 +42,18 @@ export default function ListsManager() {
               <button className="icon-btn col-span-1" onClick={() => del('experiences', e.id)} aria-label="Delete"><Trash2 size={18} /></button>
             </div>
           ))}
-          {experiences.length > 0 && <p className="text-xs text-ink/60">Columns: Company, Role, Years, Months, Currently working (Yes / No).</p>}
         </div>
       </section>
 
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-4xl">Projects</h2>
-          <button className="btn-primary" onClick={addProj} aria-label="Add project"><Plus size={16} /> Add</button>
-        </div>
+        <PageHeader title="Projects" subtitle="Portfolio projects shown on the website"
+          action={<button className="btn-primary" onClick={addProj} aria-label="Add project"><Plus size={16} /> Add</button>} />
         <div className="space-y-4">
+          {projects.length === 0 && <p className="text-sm text-ink/50">Click “Add” to add your first project.</p>}
           {projects.map((p) => (
-            <div key={p.id} className="flex gap-4 items-start bg-white border border-ink/10 p-3">
+            <Card key={p.id} className="flex gap-4 items-start p-3">
               <div className="w-24 shrink-0">
-                <div className="h-28 bg-ink/10 overflow-hidden">{p.imageUrl && <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />}</div>
+                <div className="h-28 bg-ink/10 overflow-hidden rounded">{p.imageUrl && <img src={img(p.imageUrl, 200)} alt="" className="w-full h-full object-cover" />}</div>
                 <input type="file" accept="image/*" className="text-xs mt-1 w-full" onChange={(e) => setImage(p.id, e.target.files[0])} />
               </div>
               <div className="flex-1 space-y-2">
@@ -63,7 +61,7 @@ export default function ListsManager() {
                 <textarea className="field" rows={2} placeholder="Short description" defaultValue={p.description} onBlur={(x) => upd('projects', p.id, { description: x.target.value })} />
               </div>
               <button className="icon-btn" onClick={() => del('projects', p.id)} aria-label="Delete"><Trash2 size={18} /></button>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
