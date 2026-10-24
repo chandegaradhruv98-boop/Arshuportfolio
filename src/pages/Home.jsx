@@ -4,6 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
 import useCol from '../hooks/useCol';
 
+function duration(e) {
+  const total = (Number(e.years) || 0) * 12 + (Number(e.months) || 0);
+  const y = Math.floor(total / 12);
+  const m = total % 12;
+  const parts = [];
+  if (y) parts.push(`${y} ${y === 1 ? 'year' : 'years'}`);
+  if (m || !y) parts.push(`${m} ${m === 1 ? 'month' : 'months'}`);
+  return parts.join(' ');
+}
+
 export default function Home() {
   const { content: c } = useSite();
   const nav = useNavigate();
@@ -49,7 +59,7 @@ export default function Home() {
               <h3 className="font-display text-2xl">{e.role}</h3>
               <p className="text-ink/80">{e.company}</p>
               <p className="text-sm text-ink/60 mt-1">
-                {e.months} {Number(e.months) === 1 ? 'month' : 'months'} · Currently working: {e.current ? 'Yes' : 'No'}
+                {duration(e)} · Currently working: {e.current ? 'Yes' : 'No'}
               </p>
             </li>
           ))}

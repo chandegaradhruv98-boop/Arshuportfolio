@@ -13,7 +13,7 @@ export default function ListsManager() {
   const upd = (col, id, data) => updateDoc(doc(db, col, id), data).catch(() => toast('Could not save.', 'error'));
   const del = (col, id) => window.confirm('Delete this item?') && deleteDoc(doc(db, col, id));
 
-  const addExp = () => addDoc(collection(db, 'experiences'), { company: '', role: '', months: 0, current: false, createdAt: serverTimestamp() });
+  const addExp = () => addDoc(collection(db, 'experiences'), { company: '', role: '', years: 0, months: 0, current: false, createdAt: serverTimestamp() });
   const addProj = () => addDoc(collection(db, 'projects'), { title: '', description: '', imageUrl: '', createdAt: serverTimestamp() });
 
   const setImage = async (id, file) => {
@@ -34,14 +34,15 @@ export default function ListsManager() {
             <div key={e.id} className="grid grid-cols-12 gap-3 items-center">
               <input className="field col-span-3" placeholder="Company" defaultValue={e.company} onBlur={(x) => upd('experiences', e.id, { company: x.target.value })} />
               <input className="field col-span-3" placeholder="Role" defaultValue={e.role} onBlur={(x) => upd('experiences', e.id, { role: x.target.value })} />
-              <input className="field col-span-2" type="number" min="0" placeholder="Months" defaultValue={e.months} onBlur={(x) => upd('experiences', e.id, { months: Number(x.target.value) })} />
-              <select className="field col-span-3" defaultValue={e.current ? 'Yes' : 'No'} onChange={(x) => upd('experiences', e.id, { current: x.target.value === 'Yes' })}>
+              <input className="field col-span-1" type="number" min="0" placeholder="Yrs" title="Years" defaultValue={e.years || 0} onBlur={(x) => upd('experiences', e.id, { years: Number(x.target.value) })} />
+              <input className="field col-span-1" type="number" min="0" max="11" placeholder="Mo" title="Months" defaultValue={e.months || 0} onBlur={(x) => upd('experiences', e.id, { months: Number(x.target.value) })} />
+              <select className="field col-span-3" title="Currently working" defaultValue={e.current ? 'Yes' : 'No'} onChange={(x) => upd('experiences', e.id, { current: x.target.value === 'Yes' })}>
                 <option>Yes</option><option>No</option>
               </select>
               <button className="icon-btn col-span-1" onClick={() => del('experiences', e.id)} aria-label="Delete"><Trash2 size={18} /></button>
             </div>
           ))}
-          {experiences.length > 0 && <p className="text-xs text-ink/60">Last column: currently working here (Yes / No).</p>}
+          {experiences.length > 0 && <p className="text-xs text-ink/60">Columns: Company, Role, Years, Months, Currently working (Yes / No).</p>}
         </div>
       </section>
 
